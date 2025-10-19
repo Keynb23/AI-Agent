@@ -1,0 +1,417 @@
+/* /Frontend/src/App.css */
+.App-Container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.title-card {
+  background-color: var(--PC);
+  color: white;
+  padding: 20px 40px;
+  border-radius: 8px;
+  /* Use transparent shadow that works in both light/dark */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title-card h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.message {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+  color: var(--TC);
+  text-align: center;
+}
+
+.card {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  /* Adjusted shadow opacity for better dark mode blend */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  margin-bottom: 30px;
+  width: 80%;
+  /* max-width: 600px; */
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.concept-explanation {
+  font-size: 1rem;
+  /* Use a slightly softer text color */
+  color: var(--TC);
+  opacity: 0.75;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.ai-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Code Display Styling */
+.code-example {
+  /* Code block background */
+  background-color: color-mix(in srgb, var(--BG) 95%, #000);
+  border-radius: 4px;
+  padding: 10px;
+  margin: 15px auto;
+  width: 90%;
+  text-align: left;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+}
+
+.code-example h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  /* Use TC for contrast, but dimmed */
+  color: var(--TC);
+  opacity: 0.6;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 5px;
+}
+
+.code-example pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.code-example code {
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 0.9rem;
+  /* Ensure code color has contrast */
+  color: var(--SC);
+  line-height: 1.4;
+}
+
+/* Perceptron Model Styles */
+.perceptron-model h2 {
+  color: var(--PC);
+  margin-bottom: 15px;
+}
+
+.final-prediction {
+  font-size: 1.6rem;
+  color: var(--PC);
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* CNN Model Styles */
+.cnn-model h2 {
+  display: flex;
+  justify-content: center;
+  color: var(--SC);
+  margin-bottom: 15px;
+}
+
+.image-selector {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* General button styling */
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.upload-button {
+  background-color: var(--SC);
+  color: var(--TC);
+}
+
+.upload-button:hover {
+  background-color: color-mix(in srgb, var(--SC) 80%, #000);
+  transform: translateY(-1px);
+}
+.upload-button:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.image-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  margin-top: 20px;
+}
+
+.image-selection-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 1rem;
+}
+
+.preview-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  object-fit: contain;
+  margin-top: 15px;
+  border: 1px solid var(--border-color);
+}
+
+.ai-description-result {
+  font-size: 1.5rem;
+  color: var(--TC);
+  margin: 15px 0;
+  padding: 15px;
+  border: 1px solid var(--SC);
+  border-radius: 5px;
+  /* Light background based on SC */
+  background-color: color-mix(in srgb, var(--SC) 15%, var(--card-bg));
+  font-weight: bold;
+}
+
+.feedback-section {
+  margin: 20px 0;
+}
+
+.feedback-section button {
+  margin: 0 10px;
+  padding: 12px 25px;
+  font-weight: bold;
+  color: white;
+}
+
+.button-correct {
+  background-color: #4caf50; /* Green */
+}
+
+.button-correct:hover {
+  background-color: #45a049;
+}
+
+.button-incorrect {
+  background-color: #f44336; /* Red */
+}
+
+.button-incorrect:hover {
+  background-color: #da190b;
+}
+
+.status-message {
+  font-style: italic;
+  color: var(--TC);
+  opacity: 0.7;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+.weight-details {
+  margin-top: 15px;
+  width: 90%;
+  text-align: left;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 10px 5px;
+  /* Subtle background for details */
+  background-color: color-mix(in srgb, var(--card-bg) 95%, var(--BG));
+}
+
+.weight-details summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--PC);
+  padding: 5px;
+}
+
+.footer {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: var(--TC);
+  opacity: 0.6;
+  padding-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title-card h1 {
+    font-size: 2rem;
+  }
+  .card {
+    padding: 15px;
+    width: 95%;
+  }
+  .model-interaction > div {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .feedback-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .feedback-section button {
+    margin: 0;
+    width: 80%; /* Make buttons full width on small screens */
+  }
+}
+
+/* --- *** NEW STYLES FOR SCORE BARS *** --- */
+.score-bar-container {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  padding: 4px;
+}
+
+.score-label {
+  width: 80px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 10px;
+  color: var(--TC);
+  flex-shrink: 0; /* Prevents label from shrinking */
+}
+
+.score-bar-track {
+  flex-grow: 1; /* Allows track to fill available space */
+  height: 20px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  /* Use the Primary Color for the fill */
+  background-color: var(--PC);
+  border-radius: 4px;
+  /* Animate the width change */
+  transition: width 0.5s ease-out;
+}
+
+.score-value {
+  width: 70px;
+  text-align: left;
+  padding-left: 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  color: var(--TC-subtle);
+  flex-shrink: 0; /* Prevents value from shrinking */
+}
+
+/* Highlight for the winning prediction */
+.prediction-highlight {
+  /* Use a very subtle background to highlight the row */
+  background-color: color-mix(in srgb, var(--SC) 10%, var(--card-bg));
+}
+.prediction-highlight .score-label {
+  color: var(--SC); /* Use your 'punchy' secondary color */
+}
+.prediction-highlight .score-bar-fill {
+  background-color: var(--SC); /* Use punchy color for the bar */
+}
+.prediction-highlight .score-value {
+  color: var(--SC); /* Use punchy color for the text */
+}
+
+/* Ensure inputs are usable in dark mode */
+.input-small {
+  background-color: var(--BG);
+  color: var(--TC);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 5px;
+  width: 60px;
+}
+/* This is the new container for each image */
+.selectable-image-container {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  border: 4px solid transparent; /* Start with a transparent border */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  /* --- NEW: Center content (for the loader) --- */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--border-color);
+  overflow: hidden; /* Ensures image corners are rounded */
+}
+
+/* This is the <img> tag itself */
+.selectable-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures images are cropped nicely, not stretched */
+  /* Remove borders from the image, they are on the container now */
+}
+
+/* Style for the containers that are NOT selected */
+.selectable-image-container.inactive {
+  opacity: 0.4;
+  filter: grayscale(80%);
+  border-color: var(--border-color);
+}
+
+/* Style for the ONE container that IS selected */
+.selectable-image-container.active {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.05); /* Make it pop */
+  border-color: var(--SC); /* Use your punchy secondary color */
+  box-shadow: 0 4px 15px var(--shadow-color); /* Use your theme's shadow */
+}
+
+/* Style for when user hovers over an inactive container */
+.selectable-image-container.inactive:hover {
+  opacity: 0.7;
+  filter: grayscale(0%);
+}
+
+/* New style for the loading placeholder */
+.image-loader {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--TC-subtle);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+/* We don't need the old .preview-image class anymore */
+/* You can safely delete .preview-image and .image-display */
+.image-display {
+  display: none; /* Hide the old single-image container */
+}

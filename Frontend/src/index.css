@@ -1,0 +1,46 @@
+/* /Frontend/src/index.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html,
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Updated Font Stack for a modern, clean look */
+  font-family: 'Segoe UI', 'Inter', 'Arial', sans-serif;
+  background-color: var(--BG); 
+  color: var(--TC);
+  transition: background-color 0.3s;
+}
+
+:root {
+  color-scheme: light dark;
+
+  /* Light Theme - High Contrast, Vibrant */
+  --BG: #f0f0f5;       /* Very light background */
+  --PC: #395BFF;       /* Primary Blue - strong, electric */
+  --SC: #FF4D88;       /* Secondary Pink/Red - vibrant, punchy */
+  --TC: #1f1f1f;       /* Dark Text */
+  --TC-subtle: #666;   /* Subtle Text */
+  --card-bg: white;
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(57, 91, 255, 0.15); /* Shadow from PC */
+}
+
+:root[data-theme="dark"] {
+  /* Dark Theme - Cyberpunk/Clean Dark */
+  --BG: #131418;       /* Deep dark background */
+  --PC: #6392FF;       /* Primary Blue - lighter for dark BG */
+  --SC: #FF6E9F;       /* Secondary Pink/Red - neon glow */
+  --TC: #e0e0e0;       /* Light Text */
+  --TC-subtle: #a0a0a0; /* Subtle Text */
+  --card-bg: #21232b;  /* Dark card background */
+  --border-color: #353842;
+  --shadow-color: rgba(255, 77, 136, 0.2); /* Shadow from SC */
+}   

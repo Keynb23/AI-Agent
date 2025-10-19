@@ -1,96 +1,112 @@
-from flask import Flask, request, jsonify, render_template
+# app.py
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 import numpy as np
-import os
-import sys
+from perceptron_core import Perceptron 
+from CNN import conceptual_classifier, CLASSES, IMAGE_FEATURES
 
-# --- Conditional Import for Perceptron and Data ---
-# This ensures the app doesn't crash if perceptron.py is missing definitions
-try:
-    # Assuming Perceptron class, X_or, and y_or are defined in perceptron.py
-    from perceptron import Perceptron
+app = Flask(__name__)
+CORS(app) 
+
+# ------------------------------------------------------------------
+# Perceptron Code (Unchanged)
+# ------------------------------------------------------------------
+perceptron_model = None
+perceptron_params = {"weights": [0, 0], "bias": 0}
+AND_X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+AND_Y = np.array([0, 0, 0, 1]) 
+
+@app.route('/api/hello', methods=['GET'])
+def hello():
+    return jsonify({"message": "This was created to help me understand full-stack development and machine learning better!"})
+
+@app.route('/api/perceptron/train', methods=['GET'])
+def train_perceptron_route():
+    train_perceptron() 
+    return jsonify({
+        "status": "Trained successfully!",
+        "concept": "AND Gate Logic (X1 AND X2)",
+        "weights": perceptron_params["weights"],
+        "bias": perceptron_params["bias"],
+        "explanation": "The model learned to output 1 only when both inputs are 1."
+    })
+
+def train_perceptron():
+    global perceptron_model, perceptron_params
+    perceptron_model = Perceptron(learning_rate=0.1, n_iters=10)
+    perceptron_model.fit(AND_X, AND_Y)
+    perceptron_params = {
+        "weights": perceptron_model.weights.tolist(),
+        "bias": float(perceptron_model.bias)
+    }
+
+@app.route('/api/perceptron/predict', methods=['POST'])
+def predict_perceptron():
+    data = request.get_json()
+    input1 = data.get('input1', 0)
+    input2 = data.get('input2', 0)
+    w1, w2 = perceptron_params["weights"]
+    b = perceptron_params["bias"]
+    linear_output = (w1 * input1) + (w2 * input2) + b
+    prediction = 1 if linear_output >= 0 else 0
+    return jsonify({
+        "input1": input1,
+        "input2": input2,
+        "weighted_sum": float(linear_output),
+        "prediction": prediction,
+        "weights_used": perceptron_params["weights"],
+        "bias_used": perceptron_params["bias"]
+    })
+
+# ------------------------------------------------------------------
+# CNN Routes (Modified)
+# ------------------------------------------------------------------
+
+@app.route('/api/cnn/predict', methods=['POST'])
+def cnn_predict():
+    data = request.get_json()
+    image_id = data.get('imageId', 'default')
+    # NEW: Get the list of classes to ignore from the frontend
+    ignore_classes = data.get('ignore_classes', [])
     
-    # Data Definition (if not in perceptron.py, define it here)
-    X_or = np.array([
-        [0, 0],
-        [0, 1],
-        [1, 0],
-        [1, 1]
-    ])
-    y_or = np.array([0, 1, 1, 1])
+    # Pass this list to the model
+    prediction, scores = conceptual_classifier.predict(image_id, ignore_classes)
     
-except ImportError:
-    print("FATAL ERROR: Could not import Perceptron or required data from perceptron.py.")
-    print("Please ensure perceptron.py exists and contains the Perceptron class.")
-    sys.exit(1)
+    return jsonify({
+        "imageId": image_id,
+        "prediction": prediction,
+        "scores": scores,
+        "model_weights": conceptual_classifier.weights.tolist(),
+        "features": IMAGE_FEATURES.get(image_id, np.zeros(4)).tolist()
+    })
 
-# --- Flask App Initialization ---
-# We explicitly set static_folder='static' for robustness
-app = Flask(__name__, static_folder='static')
+@app.route('/api/cnn/feedback', methods=['POST'])
+def cnn_feedback():
+    data = request.get_json()
+    image_id = data.get('imageId')
+    # NEW: Get the one correct class
+    correct_class = data.get('correct_class')
+    # NEW: Get the list of incorrect guesses
+    incorrect_classes = data.get('incorrect_classes', [])
 
-# 1. Initialize and Train Model on Startup
-try:
-    ppn_agent = Perceptron(learning_rate=0.5, epochs=10)
-    ppn_agent.fit(X_or, y_or) 
-    
-    # Check if the model converged successfully (misclassifications is 0)
-    if ppn_agent.errors_[-1] == 0:
-        print("Agent Trained Successfully (OR Logic). Converged.")
-    else:
-        print(f"Agent Trained (OR Logic). Did NOT Converge. Final Error: {ppn_agent.errors_[-1]}")
-        
-    print(f"Final Weights: {ppn_agent.weights}, Final Bias: {ppn_agent.bias}")
+    if not correct_class:
+         return jsonify({"updated": False, "message": "No correct class provided."}), 400
 
-except Exception as e:
-    print(f"FATAL ERROR during Perceptron training: {e}")
-    sys.exit(1)
+    weights_updated = conceptual_classifier.update_weights(
+        image_id, 
+        correct_class, 
+        incorrect_classes
+    )
 
+    return jsonify({
+        "updated": weights_updated,
+        "new_weights": conceptual_classifier.weights.tolist(),
+        "message": "Weights adjusted." if weights_updated else "No adjustment needed."
+    })
 
-@app.route('/')
-def index():
-    """Renders the main HTML interface from the templates folder."""
-    # This route is the cause of the 'directory listing' error if Flask isn't running.
-    # It must be the only function that calls render_template.
-    return render_template('index.html')
-
-@app.route('/predict', methods=['POST'])
-def predict_route():
-    """Handles the prediction API request from app.js."""
-    try:
-        data = request.json
-        x1 = int(data.get('x1', 0))
-        x2 = int(data.get('x2', 0))
-
-        # Input validation for binary inputs
-        if x1 not in [0, 1] or x2 not in [0, 1]:
-            return jsonify({'error': 'Inputs must be 0 or 1.'}), 400
-
-        # Convert input to NumPy array
-        input_data = np.array([[x1, x2]])
-
-        # Get prediction
-        prediction = ppn_agent.predict(input_data)[0]
-
-        return jsonify({
-            'x1': x1,
-            'x2': x2,
-            'prediction': int(prediction) # Ensure integer type for JSON
-        })
-    except Exception as e:
-        # Catch and log any errors during prediction
-        print(f"Prediction API Error: {e}")
-        return jsonify({'error': 'Internal server error during prediction.'}), 500
-
+# ------------------------------------------------------------------
+# App Start
+# ------------------------------------------------------------------
 if __name__ == '__main__':
-    # --- Critical File Structure Check ---
-    if not os.path.isdir('templates'):
-        print("ERROR: 'templates' folder not found. Create it and place index.html inside.")
-        sys.exit(1)
-    
-    if not os.path.isdir('static/css') or not os.path.isdir('static/js'):
-        print("ERROR: 'static/css' or 'static/js' folders not found.")
-        print("Ensure you have a 'static' folder with 'css' and 'js' subfolders.")
-        sys.exit(1)
-        
-    # --- Run the Application ---
-    # Using app.run() which is equivalent to 'flask run' but allows direct execution
-    app.run(debug=True)
+    train_perceptron()
+    app.run(debug=True, port=5000)
